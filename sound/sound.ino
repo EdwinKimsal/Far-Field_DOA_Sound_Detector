@@ -4,23 +4,6 @@
 // Mic 1: Positive X axis (+0.1625, 0)
 // Mic 2: Above X axis (+0.08125, +0.1407)
 // All microphones must share ground and be biased near half the ADC supply voltage.
-//
-// REV 2 -----------------------------------------------------------------------------
-// The original design measured arrival time as the instant a single raw ADC sample
-// crossed a fixed level. Acoustic signals are oscillating (AC) waveforms, and the
-// max true inter-mic delay for this array is only ~474us -- comparable to a single
-// audio cycle. That made the measured delay extremely sensitive to which half-cycle
-// happened to first poke above the threshold, producing wildly different "angles"
-// for a source sitting in a fixed position.
-//
-// This revision:
-//   1. Buffers raw samples per mic in a circular buffer.
-//   2. Detects event *onset* using a peak-hold envelope (smooths out AC phase, so
-//      onset detection no longer depends on which half-cycle happens to be sampled).
-//   3. Computes the actual inter-mic delay via cross-correlation of the buffered
-//      waveforms (searched only over the physically possible lag range), refined
-//      to sub-sample precision with parabolic interpolation of the correlation peak.
-// -------------------------------------------------------------------------------------
 
 #include <Arduino.h>
 #include <math.h>
